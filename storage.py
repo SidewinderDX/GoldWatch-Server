@@ -18,6 +18,9 @@ class Storage():
         pass
         #db_handler.saveData()
 
+    def loadStorage(self):
+        pass
+
     def loadOld(self):
         kangaroo = None
         krueger = None

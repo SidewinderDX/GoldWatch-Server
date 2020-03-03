@@ -1,20 +1,22 @@
 import sqlite3 as sql
 
+chest = "treasure_chest.db"
+
 def getData(query):
-    db = sql.connect('data_safe.db')
+    db = sql.connect(chest)
     cursor = db.cursor()
 
     cursor.execute(query)
 
 
 def saveData(data):
-    db = sql.connect('data_safe.db')
+    db = sql.connect(chest)
     cursor = db.cursor()
 
     #cursor.execute(query)
 
 def createDB():
-    db = sql.connect('data_safe.db')
+    db = sql.connect(chest)
     cursor = db.cursor()
 
     try:
