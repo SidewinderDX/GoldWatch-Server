@@ -1,4 +1,7 @@
-__pycache__/db_handler.cpython-37.pyc
+__pycache__
 *.pyc
 .vscode
 *.db
+build
+dist
+*.spec

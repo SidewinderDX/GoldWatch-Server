@@ -48,18 +48,31 @@ def lastUpdate(soup):
 
 def evaluateInput(user_input, treasure):
     if user_input == 0:
+        treasure.saveStorage()
         pass
     elif user_input == 1:
         user_input = int(input("|Anzahl der neuen Muenzen: "))
         treasure.mapleLeafAmount += user_input
 
+    elif user_input == 2:
+        user_input = int(input("|Anzahl der neuen Muenzen: "))
+        treasure.philharmonikerAmount += user_input
 
-
-def addMaple(treasure, amount):
-    treasure.mapleLeafAmount += amount
-
-def addPhil(treasure, amount):
-    treasure.philharmonikerAmount += amount
+    elif user_input == 3:
+        user_input = int(input("|Wie viele Muenzen entnehmen: "))
+        while treasure.mapleLeafAmount - user_input < 0:
+            print("|Arr, leider besitzt du nicht so viele Muenzen du Sueßwassermatrose!")
+            user_input = int(input("|Wie viele Muenzen entnehmen: "))
+        treasure.mapleLeafAmount -= user_input
+        
+    elif user_input == 4:
+        user_input = int(input("|Wie viele Muenzen entnehmen: "))
+        while treasure.philharmonikerAmount - user_input < 0:
+            print("|Arr, leider besitzt du nicht so viele Muenzen du Sueßwassermatrose!")
+            user_input = int(input("|Wie viele Muenzen entnehmen: "))
+        treasure.philharmonikerAmount-= user_input 
+    elif user_input == 5:
+        treasure.saveStorage()
 
 
 # db_handler.createDB()
@@ -111,7 +124,7 @@ else:
 
         philLen = str(treasure.philharmonikerAmount)
         philLenMoney = str(float(treasure.philharmonikerAmount) * onePhilharmonikerBuy)
-        philMoneyLine = ' ' * (98 - len(philLen) - len(philLenMoney) - 14) 
+        philMoneyLine = ' ' * (98 - len(philLen) - len(philLenMoney) - 17) 
 
         print(borderline_row)
         print(f"|{lastUpdate(soup)}{updateLine}|")
@@ -124,23 +137,18 @@ else:
         print(f"|Aktueller Wert                                                                                    |")
         print(borderline_row)
         print(f"|{treasure.mapleLeafAmount} Maple Leafs: {treasure.mapleLeafAmount * oneMapleLeafBuy}{mapleMoneyLine}|")
-        print(f"|{treasure.philharmonikerAmount} Maple Leafs: {treasure.philharmonikerAmount * onePhilharmonikerBuy}{philMoneyLine}|")
+        print(f"|{treasure.philharmonikerAmount} Philharmoniker: {treasure.philharmonikerAmount * onePhilharmonikerBuy}{philMoneyLine}|")
         print(borderline_row)
         print("|Menue                                                                                             |")
         print(borderline_row)
         print("| 1. Maple Leaf in die Truhe werfen                                                                |")
         print("| 2. Philharmoniker in die Truhe werfen                                                            |")
-        print("| 4. Maple Leaf aus der Truhe entfernen                                                            |")
-        print("| 5. Philharmoniker aus der Truhe entfernen                                                        |")
+        print("| 3. Maple Leaf aus der Truhe entfernen                                                            |")
+        print("| 4. Philharmoniker aus der Truhe entfernen                                                        |")
+        print("| 5. Matrosen abstellen um die Truhe zu bewachen (speichern)                                       |")
         print("| 0. Truhe schließen und vergraben                                                                 |")
         print(borderline_row)
         print("|Gib die Zahl der gewuenschten Option ein und bestaetige mit Enter                                 |")
         user_input = int(input("|Auswahl: "))
 
         evaluateInput(user_input, treasure)
-    # user_input = input("Auswahl: ")
-    # while user_input != "quit" or user_input != "exit":
-    #     print(user_input)
-    #     user_input = input("Auswahl: ")
-
-
