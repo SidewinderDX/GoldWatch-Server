@@ -1,42 +1,62 @@
-import sqlite3 as sql
+import mysql.connector as sql
+from mysql.connector import errorcode
 
-chest = 'treasure_chest.db'
+user = "GoldWatch"
+pw = "GW-Project"
+host = "127.0.0.1"
+database = "GW"
 
-def getData(query):
-    db = sql.connect(chest)
+def getData(coinType):
+    db = sql.connect(user=user, password=pw, host=host, database=database)
     cursor = db.cursor()
-
-    cursor.execute(query)
+    cursor.execute(f"SELECT * FROM `priceHistory{coinType}`")
     ret = cursor.fetchall()
-    db.close()
+    
     return ret
 
-def saveData(data):
-    try:
-        db = sql.connect(chest)
-    except Exception as err:
-        print(err)
-    else:
-        cursor = db.cursor()
-        # print("saving")
-        cursor.execute(data)
-        db.commit()
-        # cursor.
-        db.close()
+def saveData(date, buy, sell, coinType):
+    db = sql.connect(user=user, password=pw, host=host, database=database)
+    cursor = db.cursor()
+    cursor.execute(f"INSERT INTO `priceHistory{coinType}` (date, Buy, Sell) VALUES ({date},{buy},{sell}) ON DUPLICATE KEY UPDATE date=date")
+    db.commit()
+    cursor.close()
+    db.close()
 
-def createDB():
-    db = sql.connect(chest)
+def create_database(cursor):
+    try:
+        cursor.execute("CREATE DATABASE GW DEFAULT CHARACTER SET 'utf8'")
+    except sql.Error as err:
+        print(f"Failed creating database: {err}")
+        exit(1)
+
+# Only runs if db_handler runs on it own
+# Trys to create the database if not found
+# creates all needed tables
+if __name__ == "__main__":
+    db = sql.connect(user=user, password=pw, host=host)
     cursor = db.cursor()
 
     try:
-        cursor.execute("CREATE TABLE priceHistory (date, kruegerBuy, kruegerSell, philBuy, philSell, mapleBuy, mapleSell, kangBuy, kangSell)")
+        cursor.execute("USE GW")
     except sql.Error as err:
-        pass
-    try:
-        cursor.execute("CREATE TABLE userData (entryID INTEGER PRIMARY KEY, kruegAmount INTEGER, philAmount INTEGER, mapleAmount INTEGER, kangAmount INTEGER)")
-    except sql.Error as err:
-        pass
+        print("No GW Database found!")
+        if err.errno == errorcode.ER_BAD_DB_ERROR:
+            create_database(cursor)
+            print("Succesfully created database!")
+        else:
+            print(err)
+            exit(1)
     
-    db.close()
+    db.database = "GW"
 
-# createDB()
+    tableK = "CREATE TABLE `priceHistoryKrueger` (date INT, Buy FLOAT, Sell FLOAT, PRIMARY KEY (`date`)) ENGINE=InnoDB;"
+    tableP = "CREATE TABLE `priceHistoryPhil` (date INT, Buy FLOAT, Sell FLOAT, PRIMARY KEY (`date`)) ENGINE=InnoDB;"
+    tableM = "CREATE TABLE `priceHistoryMaple` (date INT, Buy FLOAT, Sell FLOAT, PRIMARY KEY (`date`)) ENGINE=InnoDB;"
+    tableKa = "CREATE TABLE `priceHistoryKang` (date INT, Buy FLOAT, Sell FLOAT, PRIMARY KEY (`date`)) ENGINE=InnoDB;"
+
+    querry = tableK + tableP + tableM + tableKa
+    cursor.execute(querry, multi=True)
+
+    db.commit()
+    cursor.close()
+    db.close()
